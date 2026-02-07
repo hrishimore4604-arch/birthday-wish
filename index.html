@@ -24,7 +24,7 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        /* 1. Calendar Overlay (Centered) */
+        /* 1. Calendar Overlay */
         .calendar-section {
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -47,7 +47,7 @@
 
         /* 3. Star Map Section */
         .star-map-section { 
-            height: 400vh; /* Reduced height to snap to photos faster */
+            height: 500vh; 
             background: radial-gradient(circle at 50% 50%, var(--night-sky-center) 0%, var(--night-sky-edge) 100%); 
             position: relative; z-index: 1; 
         }
@@ -66,7 +66,7 @@
             50% { opacity: 0.9; transform: scale(1.05); }
         }
 
-        /* 4. Photo Section - Immediate Transition */
+        /* 4. Photo Section */
         .photo-section { height: 600vh; background: #ffe5ec; position: relative; margin-top: -1px; }
         .photo-container { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .polaroid { background: white; padding: 12px 12px 35px; position: absolute; opacity: 0; width: 280px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
@@ -166,34 +166,35 @@
             stars.push({ el: s, skyX, skyY, hX: hp.x, hY: hp.y });
         }
 
-        // Tighter Star Animation
         const starTl = gsap.timeline({
             scrollTrigger: { 
                 trigger: "#star-trigger", 
                 start: "top top", 
-                end: "bottom top", // Ends pinning immediately when section is scrolled past
+                end: "bottom top", 
                 scrub: 1.2, 
                 pin: true 
             }
         });
 
+        // THE EMOTIONAL SEQUENCE:
         starTl.to("#star-msg-1", { opacity: 1, duration: 1 })
               .to(stars.map(s => s.el), { left: (i) => stars[i].skyX + "vw", top: (i) => stars[i].skyY + "vh", duration: 3, ease: "none" }, 1)
               .to("#star-msg-1", { opacity: 0, duration: 0.5 }, 1.5)
               .to("#star-msg-2", { opacity: 1, duration: 1 }, 2)
-              .to("#star-msg-2", { opacity: 0, duration: 0.5, delay: 1 }, 3)
+              .to("#star-msg-2", { opacity: 0, duration: 0.5, delay: 1.5 }, 3.5) // Fades out text
+              .to({}, { duration: 1.5 }) // THE MOMENT: Empty sky for her to appreciate
               .to(stars.map(s => s.el), { 
                   left: (i) => stars[i].hX + "vw", 
                   top: (i) => stars[i].hY + "vh", 
                   backgroundColor: "#ff8fab",
                   boxShadow: "0 0 15px #ff8fab",
-                  duration: 3 
-              }, 3.5);
+                  duration: 4 
+              }, "+=0.2");
 
         // 3. Photo Transitions
         const pics = gsap.utils.toArray('.polaroid');
         pics.forEach((pic, i) => {
-            gsap.timeline({ scrollTrigger: { trigger: ".photo-section", start: `${i * 15}% top`, end: `${(i+1) * 15}% top`, scrub: true }})
+            gsap.timeline({ scrollTrigger: { trigger: ".photo-section", start: `${i * 20}% top`, end: `${(i+1) * 20}% top`, scrub: true }})
             .to(pic, { opacity: 1, scale: 1.1, rotation: i % 2 ? 5 : -5 })
             .to(pic, { opacity: 0, y: -100, scale: 0.9 });
         });
