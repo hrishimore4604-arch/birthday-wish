@@ -24,7 +24,7 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        /* 1. Calendar Overlay */
+        /* 1. Calendar Overlay (Centered) */
         .calendar-section {
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -176,13 +176,12 @@
             }
         });
 
-        // THE EMOTIONAL SEQUENCE:
         starTl.to("#star-msg-1", { opacity: 1, duration: 1 })
               .to(stars.map(s => s.el), { left: (i) => stars[i].skyX + "vw", top: (i) => stars[i].skyY + "vh", duration: 3, ease: "none" }, 1)
               .to("#star-msg-1", { opacity: 0, duration: 0.5 }, 1.5)
               .to("#star-msg-2", { opacity: 1, duration: 1 }, 2)
-              .to("#star-msg-2", { opacity: 0, duration: 0.5, delay: 1.5 }, 3.5) // Fades out text
-              .to({}, { duration: 1.5 }) // THE MOMENT: Empty sky for her to appreciate
+              .to("#star-msg-2", { opacity: 0, duration: 0.5, delay: 1.5 }, 3.5)
+              .to({}, { duration: 1.5 }) // PAUSE: Appreciate the night sky
               .to(stars.map(s => s.el), { 
                   left: (i) => stars[i].hX + "vw", 
                   top: (i) => stars[i].hY + "vh", 
@@ -194,7 +193,7 @@
         // 3. Photo Transitions
         const pics = gsap.utils.toArray('.polaroid');
         pics.forEach((pic, i) => {
-            gsap.timeline({ scrollTrigger: { trigger: ".photo-section", start: `${i * 20}% top`, end: `${(i+1) * 20}% top`, scrub: true }})
+            gsap.timeline({ scrollTrigger: { trigger: ".photo-section", start: `${i * 20}% top`, end: `${(i + 1) * 20}% top`, scrub: true }})
             .to(pic, { opacity: 1, scale: 1.1, rotation: i % 2 ? 5 : -5 })
             .to(pic, { opacity: 0, y: -100, scale: 0.9 });
         });
