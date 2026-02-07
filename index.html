@@ -24,7 +24,7 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        /* Centered Calendar Intro */
+        /* 1. Calendar Overlay (Centered) */
         .calendar-section {
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -41,38 +41,37 @@
         .cal-day { font-size: 7rem; font-weight: 700; color: #333; margin-top: 20px; }
         .cal-subtext { color: white; font-weight: 500; font-size: 1.3rem; opacity: 0; }
 
-        /* Birthday Wish Section */
+        /* 2. Wish Section */
         .wish-section { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--soft-white); }
         .wish-section h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 7vw, 3.8rem); color: var(--accent-rose); text-align: center; }
 
-        /* Reverting to Nebula Background */
+        /* 3. Star Map Section (Original Nebula Background) */
         .star-map-section { 
-            height: 550vh; 
+            height: 500vh; 
             background: radial-gradient(circle at 50% 50%, var(--night-sky-center) 0%, var(--night-sky-edge) 100%); 
             position: relative; z-index: 1; 
         }
-
         .star-text-wrapper { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 100; pointer-events: none; }
         .star-text { color: white; font-family: 'Dancing Script', cursive; font-size: 2.8rem; text-align: center; position: absolute; opacity: 0; padding: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.4); }
 
-        /* Smoothed 3D Twinkling Stars */
+        /* Preferred Star Twinkling & Smoothing from your code */
         .star { 
             position: absolute; background: white; border-radius: 50%; z-index: 2; 
-            filter: blur(0.3px); 
-            will-change: transform, opacity, left, top;
+            filter: blur(0.2px); 
+            will-change: transform, opacity;
         }
-        .star-bright { box-shadow: 0 0 12px 2px rgba(255, 255, 255, 0.5), 0 0 20px 4px rgba(255, 255, 255, 0.2); }
-        
+        .star-bright { box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.4), 0 0 18px 2px rgba(255, 255, 255, 0.15); }
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(0.85); }
-            50% { opacity: 0.95; transform: scale(1.1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
         }
 
-        /* Photo & Mailbox Sections */
+        /* 4. Photo Section */
         .photo-section { height: 600vh; background: #ffe5ec; position: relative; margin-top: -1px; }
         .photo-container { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .polaroid { background: white; padding: 12px 12px 35px; position: absolute; opacity: 0; width: 280px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
         .polaroid img { width: 100%; border-radius: 2px; }
+
         .mailbox-section { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--primary-pink); }
     </style>
 </head>
@@ -108,7 +107,7 @@
     </section>
 
     <section class="mailbox-section">
-        <div style="font-size: 7rem; cursor: pointer; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));" onclick="document.getElementById('note').style.display='block'">📬</div>
+        <div style="font-size: 7rem; cursor: pointer;" onclick="document.getElementById('note').style.display='block'">📬</div>
     </section>
 
     <div id="note" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:35px; border-radius:25px; z-index:1000; width:85%; max-width:400px; box-shadow:0 30px 60px rgba(0,0,0,0.4);">
@@ -120,7 +119,7 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Calendar & Cannon Confetti
+        // 1. Calendar & Full Screen Confetti Cannons
         let dayObj = { val: 1 };
         gsap.to("#cal-subtext", { opacity: 1, duration: 1, delay: 0.5 });
         gsap.to(dayObj, {
@@ -128,22 +127,24 @@
             onComplete: () => {
                 const duration = 3000;
                 const end = Date.now() + duration;
+
                 (function frame() {
                   confetti({ particleCount: 8, angle: 60, spread: 80, origin: { x: 0, y: 0.65 }, colors: ['#ffafcc', '#ff8fab', '#ffffff'] });
                   confetti({ particleCount: 8, angle: 120, spread: 80, origin: { x: 1, y: 0.65 }, colors: ['#ffafcc', '#ff8fab', '#ffffff'] });
                   if (Date.now() < end) requestAnimationFrame(frame);
                 }());
+
                 gsap.to("#calendar", { y: "-100%", duration: 1, ease: "power4.inOut", delay: 1.2 });
             }
         });
 
-        // 2. Huge Star Heart Logic
+        // 2. Stars Logic (Symmetric -> Sky -> MASSIVE Filled Heart)
         const container = document.getElementById('star-container');
-        const starCount = 800; // High density for massive heart
+        const starCount = 850; // High density to fill the massive heart
         const stars = [];
 
         function isInsideHeart(x, y) {
-            // SCALE DOUBLED AGAIN TO 6.0 FOR MASSIVE HEART
+            // SCALE SET TO 6.0 FOR A MASSIVE HEART SPREAD
             const nx = (x - 50) / 6.0; 
             const ny = (y - 45) / -6.0;
             return Math.pow(nx * nx + ny * ny - 1, 3) - nx * nx * ny * ny * ny <= 0;
@@ -154,15 +155,20 @@
             s.className = 'star';
             const sizeValue = Math.random() * 2.8 + 0.4;
             s.style.width = sizeValue + 'px'; s.style.height = sizeValue + 'px';
-            if (sizeValue > 1.8) s.classList.add('star-bright');
+            
+            if (sizeValue > 1.8) {
+                s.classList.add('star-bright');
+                s.style.opacity = Math.random() * 0.3 + 0.7;
+            } else {
+                s.style.opacity = Math.random() * 0.6 + 0.2;
+            }
 
             s.style.animation = `twinkle ${2.5 + Math.random() * 4}s infinite ease-in-out`;
             s.style.animationDelay = `${Math.random() * 5}s`;
 
-            // Grid Layout
-            const cols = 20;
-            s.style.left = (i % cols) * 5 + 'vw';
-            s.style.top = Math.floor(i / cols) * 5 + 'vh';
+            const cols = 25;
+            s.style.left = (i % cols) * 4 + 'vw';
+            s.style.top = Math.floor(i / cols) * 4 + 'vh';
             container.appendChild(s);
 
             const skyX = Math.random() * 100;
@@ -178,15 +184,15 @@
         }
 
         const starTl = gsap.timeline({
-            scrollTrigger: { trigger: "#star-trigger", start: "top top", end: "bottom top", scrub: 2.0, pin: true }
+            scrollTrigger: { trigger: "#star-trigger", start: "top top", end: "bottom top", scrub: 1.8, pin: true }
         });
 
         starTl.to("#star-msg-1", { opacity: 1, duration: 1 })
               .to(stars.map(s => s.el), { left: (i) => stars[i].skyX + "vw", top: (i) => stars[i].skyY + "vh", duration: 3 }, 1)
               .to("#star-msg-1", { opacity: 0, duration: 1 }, 1.5)
               .to("#star-msg-2", { opacity: 1, duration: 1 }, 2)
-              .to("#star-msg-2", { opacity: 0, duration: 1, delay: 1.5 }, 3.5)
-              .to({}, { duration: 1 }) // Viewport for Feb 9th sky
+              .to("#star-msg-2", { opacity: 0, duration: 1, delay: 1.5 }, 3.5) // Let sky linger
+              .to({}, { duration: 1 }) // Pause to see the sky
               .to(stars.map(s => s.el), { 
                   left: (i) => stars[i].hX + "vw", 
                   top: (i) => stars[i].hY + "vh", 
