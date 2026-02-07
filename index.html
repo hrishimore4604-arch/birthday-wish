@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
 
     <style>
@@ -13,13 +15,15 @@
             --primary-pink: #ffafcc;
             --soft-white: #fdfcf0;
             --accent-rose: #ff8fab;
-            --night-sky: #02040a; /* Darker black for better star contrast */
+            --night-sky-center: #050a18;
+            --night-sky-edge: #02040a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        /* Calendar Overlay */
+        /* 1. Calendar Overlay */
         .calendar-section {
             height: 100vh; width: 100%;
             display: flex; justify-content: center; align-items: center;
@@ -29,20 +33,22 @@
         .calendar-card {
             background: white; width: 220px; height: 280px;
             border-radius: 20px; text-align: center; border: 5px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
         .cal-header { background: #d90429; color: white; padding: 15px; font-weight: bold; border-radius: 12px 12px 0 0; }
         .cal-day { font-size: 7rem; font-weight: 700; color: #333; margin-top: 20px; }
 
-        /* Wish Section */
+        /* 2. Wish Section */
         .wish-section {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: var(--soft-white);
         }
 
-        /* Star Map Section */
+        /* 3. Star Map Section */
         .star-map-section {
-            height: 500vh;
-            background: var(--night-sky);
+            height: 450vh;
+            /* Radial gradient creates a "nebula" feel so pure black isn't harsh */
+            background: radial-gradient(circle at 50% 50%, var(--night-sky-center) 0%, var(--night-sky-edge) 100%);
             position: relative;
             z-index: 1;
         }
@@ -56,35 +62,42 @@
         .star-text {
             color: white; font-family: 'Dancing Script', cursive;
             font-size: clamp(1.8rem, 6vw, 3rem); text-align: center;
-            text-shadow: 0 0 20px rgba(255,255,255,0.8); padding: 20px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.4); padding: 20px;
         }
 
-        /* Star Styles & Twinkle */
+        /* Natural Star Styles */
         .star {
             position: absolute; background: white; border-radius: 50%;
             z-index: 2;
+            filter: blur(0.2px); /* Removes digital sharpness */
+        }
+
+        .star-bright {
+            /* Softer, transparent glow layers instead of hard white */
+            box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.4), 
+                        0 0 18px 2px rgba(255, 255, 255, 0.15);
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0%, 100% { opacity: 0.3; transform: scale(0.85); }
+            50% { opacity: 0.9; transform: scale(1.05); }
         }
 
-        /* Photo Section */
-        .photo-section { height: 700vh; background: #ffe5ec; position: relative; }
+        /* 4. Photo Section */
+        .photo-section { height: 750vh; background: #ffe5ec; position: relative; }
         .photo-container { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .polaroid {
             background: white; padding: 12px 12px 35px; position: absolute;
-            opacity: 0; width: 280px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            opacity: 0; width: 280px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
-        .polaroid img { width: 100%; }
+        .polaroid img { width: 100%; border-radius: 2px; }
 
-        /* Mailbox */
+        /* 5. Mailbox */
         .mailbox-section { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--primary-pink); }
         .note-popup {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; padding: 35px; border-radius: 25px; z-index: 1000; width: 90%; max-width: 450px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -115,71 +128,69 @@
 
     <section class="photo-section">
         <div class="photo-container">
-            <div class="polaroid"><img src="images/1.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.3rem;">Caption 1</div></div>
-            <div class="polaroid"><img src="images/2.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.3rem;">Caption 2</div></div>
-            <div class="polaroid"><img src="images/3.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.3rem;">Caption 3</div></div>
+            <div class="polaroid"><img src="images/1.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Memory One</div></div>
+            <div class="polaroid"><img src="images/2.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Memory Two</div></div>
+            <div class="polaroid"><img src="images/3.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Memory Three</div></div>
+            <div class="polaroid"><img src="images/4.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Memory Four</div></div>
             </div>
     </section>
 
     <section class="mailbox-section">
-        <div style="font-size: 7rem; cursor: pointer; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));" onclick="openNote()">📬</div>
+        <div style="font-size: 7rem; cursor: pointer;" onclick="openNote()">📬</div>
     </section>
 
     <div class="note-popup" id="note">
         <h2 style="font-family:'Dancing Script'; font-size: 2.2rem; margin-bottom:15px; color: var(--accent-rose);">My Dearest...</h2>
-        <p style="line-height: 1.6; font-size: 1.1rem; color: #555;">(Paste your beautiful message here)</p>
-        <button onclick="closeNote()" style="margin-top:25px; width:100%; padding:12px; border:none; background:var(--accent-rose); color:white; border-radius:12px; cursor: pointer; font-size: 1rem; font-weight: bold;">Close with Love</button>
+        <p style="line-height: 1.6; font-size: 1.1rem;">Write your beautiful note here.</p>
+        <button onclick="closeNote()" style="margin-top:25px; width:100%; padding:12px; border:none; background:var(--accent-rose); color:white; border-radius:12px; cursor: pointer; font-weight: bold;">Close</button>
     </div>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Calendar
+        // 1. Calendar Intro
         let dayObj = { val: 1 };
         gsap.to(dayObj, {
             val: 9, duration: 2.5, onUpdate: () => document.getElementById('day-counter').innerText = Math.floor(dayObj.val),
-            onComplete: () => gsap.to("#calendar", { y: "-100%", duration: 1.2, ease: "power4.inOut", delay: 0.5 })
+            onComplete: () => gsap.to("#calendar", { y: "-100%", duration: 1.2, ease: "power4.inOut", delay: 0.8 })
         });
 
-        // 2. Advanced Twinkling Stars Logic
+        // 2. Sophisticated Star Logic
         const container = document.getElementById('star-container');
-        const starCount = 400; // Increased density
+        const starCount = 450;
         const stars = [];
 
         for (let i = 0; i < starCount; i++) {
             const s = document.createElement('div');
             s.className = 'star';
             
-            // Randomize size to create depth (0.5px to 3.5px)
-            const sizeValue = Math.random() * 3 + 0.5;
+            // Varied sizes for depth
+            const sizeValue = Math.random() * 2.5 + 0.4;
             s.style.width = sizeValue + 'px';
             s.style.height = sizeValue + 'px';
             
-            // Bright stars get a glow, small ones are dim
-            if (sizeValue > 2.5) {
-                s.style.boxShadow = "0 0 10px 2px white";
-                s.style.opacity = "1";
+            // Apply bloom to larger stars
+            if (sizeValue > 1.8) {
+                s.classList.add('star-bright');
+                s.style.opacity = Math.random() * 0.3 + 0.7;
             } else {
-                s.style.opacity = Math.random() * 0.5 + 0.3;
+                s.style.opacity = Math.random() * 0.6 + 0.2;
             }
 
-            // Twinkle Effect - Randomize delay and duration so they don't all blink at once
-            s.style.animation = `twinkle ${2 + Math.random() * 5}s infinite ease-in-out`;
+            // Individual organic twinkling
+            s.style.animation = `twinkle ${3 + Math.random() * 5}s infinite ease-in-out`;
             s.style.animationDelay = `${Math.random() * 5}s`;
 
-            // Start in Symmetrical Grid
+            // Initial Grid (20 cols)
             const cols = 20;
-            const rows = 20;
-            const r = Math.floor(i / cols);
-            const c = i % cols;
-            const startX = (c * (100 / (cols - 1)));
-            const startY = (r * (100 / (rows - 1)));
+            const startX = (i % cols) * (100 / cols);
+            const startY = Math.floor(i / cols) * (100 / 23);
             
             s.style.left = startX + 'vw';
             s.style.top = startY + 'vh';
             container.appendChild(s);
 
-            // End in Real Sky Alignment (Chaotic/Natural)
+            // Real Sky Target Spread
             const targetX = Math.random() * 100;
             const targetY = Math.random() * 100;
             
@@ -198,7 +209,7 @@
             top: (i) => stars[i].ty + "vh",
             duration: 4, ease: "power2.inOut"
         })
-        .to("#star-message", { opacity: 0, scale: 0.8, duration: 1.5 }, "-=2");
+        .to("#star-message", { opacity: 0, scale: 0.9, y: -50, duration: 1.5 }, "-=2.5");
 
         // 3. Photo Animation
         const pics = gsap.utils.toArray('.polaroid');
