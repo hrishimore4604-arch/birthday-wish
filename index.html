@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
 
     <style>
@@ -15,149 +13,90 @@
             --primary-pink: #ffafcc;
             --soft-white: #fdfcf0;
             --accent-rose: #ff8fab;
-            --night-sky: #0b132b;
+            --night-sky: #050a18;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--soft-white);
-            color: #4a4a4a;
-            overflow-x: hidden;
-        }
-
-        /* 1. Calendar Intro */
+        /* Calendar Overlay */
         .calendar-section {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 100vh; width: 100%;
+            display: flex; justify-content: center; align-items: center;
             background: var(--primary-pink);
-            flex-direction: column;
-            position: fixed;
-            width: 100%;
-            z-index: 100;
+            position: fixed; z-index: 200;
         }
-
         .calendar-card {
-            background: white;
-            width: 220px;
-            height: 280px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            border: 5px solid white;
+            background: white; width: 220px; height: 280px;
+            border-radius: 20px; text-align: center; border: 5px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
-
-        .cal-header { background: #d90429; color: white; padding: 15px; font-weight: bold; font-size: 1.5rem; border-radius: 12px 12px 0 0; }
+        .cal-header { background: #d90429; color: white; padding: 15px; font-weight: bold; border-radius: 12px 12px 0 0; }
         .cal-day { font-size: 7rem; font-weight: 700; color: #333; margin-top: 20px; }
 
-        /* 2. Hero Wish */
-        .hero {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+        /* Wish Section */
+        .wish-section {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
             background: var(--soft-white);
         }
 
-        .hero h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2rem, 8vw, 4rem);
-            color: var(--accent-rose);
-            padding: 20px;
-        }
-
-        /* 3. Star Map */
+        /* Star Map Section */
         .star-map-section {
-            height: 300vh;
+            height: 400vh; /* Long scroll for smooth alignment */
             background: var(--night-sky);
             position: relative;
+            z-index: 1;
         }
 
-        .star-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
-            width: 90%;
-            z-index: 10;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 5px white;
-        }
-
-        /* 4. Photo Stack */
-        .photo-section {
-            height: 600vh; /* Long scroll for 10 photos */
-            background: #ffe5ec;
-            position: relative;
-        }
-
-        .photo-container {
+        .star-text-wrapper {
             position: sticky;
             top: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            z-index: 50;
+            pointer-events: none;
         }
 
-        .polaroid {
-            background: white;
-            padding: 15px 15px 40px 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        .star-text {
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.5rem, 6vw, 2.8rem);
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255,255,255,0.6);
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .star {
             position: absolute;
-            opacity: 0;
-            max-width: 300px;
-            width: 80%;
-            transform: scale(0.5);
-        }
-
-        .polaroid img { width: 100%; height: auto; display: block; }
-        .caption { font-family: 'Dancing Script', cursive; text-align: center; margin-top: 15px; font-size: 1.4rem; }
-
-        /* 5. Mailbox */
-        .mailbox-section {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--primary-pink);
-        }
-
-        .mailbox-icon { font-size: 6rem; cursor: pointer; transition: 0.3s; }
-        .mailbox-icon:hover { transform: scale(1.1) rotate(-5deg); }
-
-        .note-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            z-index: 1000;
-            width: 85%;
-            max-width: 500px;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fff;
+            z-index: 2;
         }
 
-        .close-btn { background: var(--accent-rose); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 20px; width: 100%; }
+        /* Photo Stack Section */
+        .photo-section { height: 700vh; background: #ffe5ec; position: relative; }
+        .photo-container { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .polaroid {
+            background: white; padding: 12px 12px 35px; position: absolute;
+            opacity: 0; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: scale(0.8);
+        }
+        .polaroid img { width: 100%; border-radius: 2px; }
+
+        /* Mailbox */
+        .mailbox-section { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--primary-pink); }
+        .mailbox-btn { font-size: 6rem; cursor: pointer; transition: transform 0.3s; }
+        .mailbox-btn:hover { transform: scale(1.1); }
+        
+        .note-popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -167,97 +106,92 @@
             <div class="cal-header">FEBRUARY</div>
             <div class="cal-day" id="day-counter">1</div>
         </div>
-        <p style="margin-top: 20px; color: white; font-weight: 500;">Wait for it...</p>
     </div>
 
-    <section class="hero">
-        <h1 id="wish-text">Happy Birthday to the most<br>special person in my life! 🎂</h1>
+    <section class="wish-section">
+        <h1 style="font-family: 'Dancing Script'; font-size: clamp(2rem, 8vw, 3.5rem); color: var(--accent-rose); text-align: center; padding: 20px;">
+            Happy Birthday to the most<br>special person in my life! 🎂
+        </h1>
     </section>
 
     <section class="star-map-section" id="star-trigger">
-        <div class="star-text" id="star-message">
-            This is how the stars aligned <br> 
-            on that special day in 2006...
+        <div class="star-text-wrapper">
+            <h2 class="star-text" id="star-message">
+                This is how the stars aligned<br>across the sky on February 9, 2006...
+            </h2>
         </div>
         <div id="star-container"></div>
     </section>
 
     <section class="photo-section">
-        <div class="photo-container">
-            <div class="polaroid"><img src="images/1.jpg" alt="1"><div class="caption">The first moment ❤️</div></div>
-            <div class="polaroid"><img src="images/2.jpg" alt="2"><div class="caption">Your beautiful smile</div></div>
-            <div class="polaroid"><img src="images/3.jpg" alt="3"><div class="caption">Best day ever</div></div>
-            <div class="polaroid"><img src="images/4.jpg" alt="4"><div class="caption">Forever to go</div></div>
+        <div class="photo-container" id="photo-wrap">
+            <div class="polaroid"><img src="images/1.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Memory One ❤️</div></div>
+            <div class="polaroid"><img src="images/2.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Your Smile ✨</div></div>
+            <div class="polaroid"><img src="images/3.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">Us. Forever.</div></div>
+            <div class="polaroid"><img src="images/4.jpg"><div style="text-align:center; font-family:'Dancing Script'; margin-top:10px; font-size: 1.2rem;">That special day...</div></div>
             </div>
     </section>
 
     <section class="mailbox-section">
-        <div class="mailbox-icon" onclick="openNote()">📬</div>
+        <div class="mailbox-btn" onclick="openNote()">📬</div>
     </section>
 
     <div class="note-popup" id="note">
-        <h2 style="font-family: 'Dancing Script'; font-size: 2rem; margin-bottom: 15px;">My Dearest,</h2>
-        <p>Write your long heart-felt message here. Tell her how much she means to you and why February 9th is your favorite day of the year!</p>
-        <button class="close-btn" onclick="closeNote()">Close with Love</button>
+        <h2 style="font-family:'Dancing Script'; font-size: 2rem; margin-bottom:15px; color: var(--accent-rose);">My Dearest...</h2>
+        <p style="line-height: 1.6;">(Paste your long, heart-touching message here. Tell her how much you love her!)</p>
+        <button onclick="closeNote()" style="margin-top:20px; width:100%; padding:12px; border:none; background:var(--accent-rose); color:white; border-radius:10px; cursor: pointer; font-weight: bold;">Close with Love</button>
     </div>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- 1. Calendar Intro Logic ---
+        // --- 1. Calendar Logic ---
         let dayObj = { val: 1 };
         gsap.to(dayObj, {
-            val: 9,
-            duration: 3,
-            ease: "none",
-            onUpdate: () => {
-                document.getElementById('day-counter').innerText = Math.floor(dayObj.val);
-            },
-            onComplete: () => {
-                gsap.to("#calendar", { 
-                    y: -1000, 
-                    duration: 1.5, 
-                    ease: "power4.inOut",
-                    delay: 0.5 
-                });
-            }
+            val: 9, duration: 2.5, onUpdate: () => document.getElementById('day-counter').innerText = Math.floor(dayObj.val),
+            onComplete: () => gsap.to("#calendar", { y: "-100%", duration: 1.2, ease: "power4.inOut", delay: 0.8 })
         });
 
-        // --- 2. Star Alignment Logic ---
+        // --- 2. Star Map Logic (Global Spread Alignment) ---
         const container = document.getElementById('star-container');
+        const starCount = 150;
         const stars = [];
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            const size = Math.random() * 3 + 'px';
-            star.style.width = size;
-            star.style.height = size;
-            star.style.left = Math.random() * 100 + 'vw';
-            star.style.top = Math.random() * 100 + 'vh';
-            container.appendChild(star);
-            stars.push({ 
-                el: star,
-                tx: 30 + (Math.random() * 40), // Target clusters in center
-                ty: 20 + (Math.random() * 50) 
-            });
+
+        for (let i = 0; i < starCount; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = (Math.random() * 2.5 + 1) + 'px';
+            s.style.width = size; s.style.height = size;
+            
+            // Starts Random
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            s.style.left = startX + 'vw';
+            s.style.top = startY + 'vh';
+            
+            container.appendChild(s);
+
+            // Target Position (Feb 9, 2006 Spread)
+            // Using a seeded random based on 'i' to create a consistent, structured spread
+            const tx = ( (i * 13) % 100 ); 
+            const ty = ( (i * 7) % 100 );
+            stars.push({ el: s, x: tx, y: ty });
         }
 
         const starTl = gsap.timeline({
             scrollTrigger: {
                 trigger: "#star-trigger",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1,
-                pin: true
+                start: "top top", end: "bottom bottom", scrub: 1.5, pin: true
             }
         });
 
+        // Transition stars to their "aligned" positions
         starTl.to(stars.map(s => s.el), {
-            left: (i) => stars[i].tx + "vw",
-            top: (i) => stars[i].ty + "vh",
-            duration: 2
+            left: (i) => stars[i].x + "vw",
+            top: (i) => stars[i].y + "vh",
+            duration: 3, stagger: 0.002, ease: "power2.inOut"
         })
-        .to("#star-message", { opacity: 0, y: -50 }, "<1");
+        .to("#star-message", { opacity: 0, y: -80, duration: 1 }, "-=1.5");
 
         // --- 3. Photo Stack Logic ---
         const pics = gsap.utils.toArray('.polaroid');
@@ -265,16 +199,14 @@
             gsap.timeline({
                 scrollTrigger: {
                     trigger: ".photo-section",
-                    start: `${i * 10}% top`,
-                    end: `${(i + 1) * 10}% top`,
-                    scrub: true
+                    start: `${i * 10}% top`, end: `${(i + 1) * 10}% top`, scrub: true
                 }
             })
-            .to(pic, { opacity: 1, scale: 1, rotation: i % 2 === 0 ? 5 : -5 })
-            .to(pic, { opacity: 0, y: -100, scale: 0.8 }, "+=0.5");
+            .to(pic, { opacity: 1, scale: 1.1, rotation: i % 2 ? 6 : -6, duration: 1 })
+            .to(pic, { opacity: 0, y: -150, scale: 0.9, duration: 1 }, "+=0.5");
         });
 
-        // --- 4. Mailbox Logic ---
+        // --- 4. Mailbox Pop-up ---
         function openNote() { document.getElementById('note').style.display = 'block'; }
         function closeNote() { document.getElementById('note').style.display = 'none'; }
     </script>
