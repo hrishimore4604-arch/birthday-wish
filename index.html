@@ -21,9 +21,10 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background: var(--soft-white); overflow-x: hidden; }
 
-        /* Centered Calendar */
+        /* 1. Calendar Overlay (Centered) */
         .calendar-section {
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -38,25 +39,30 @@
         }
         .cal-header { background: #d90429; color: white; padding: 15px; font-weight: bold; border-radius: 12px 12px 0 0; }
         .cal-day { font-size: 7rem; font-weight: 700; color: #333; margin-top: 20px; }
-        .cal-subtext { color: white; font-weight: 500; font-size: 1.3rem; }
+        .cal-subtext { color: white; font-weight: 500; font-size: 1.3rem; opacity: 0; }
 
-        /* Wish Section */
+        /* 2. Wish Section */
         .wish-section { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--soft-white); }
-        .wish-section h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 7vw, 3.5rem); color: var(--accent-rose); text-align: center; }
+        .wish-section h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 7vw, 3.8rem); color: var(--accent-rose); text-align: center; }
 
-        /* Star Map Section */
+        /* 3. Star Map Section */
         .star-map-section { height: 500vh; background: radial-gradient(circle at 50% 50%, var(--night-sky-center) 0%, var(--night-sky-edge) 100%); position: relative; z-index: 1; }
         .star-text-wrapper { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 100; pointer-events: none; }
-        .star-text { color: white; font-family: 'Dancing Script', cursive; font-size: 2.5rem; text-align: center; position: absolute; opacity: 0; padding: 20px; }
+        .star-text { color: white; font-family: 'Dancing Script', cursive; font-size: 2.8rem; text-align: center; position: absolute; opacity: 0; padding: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.4); }
 
+        /* Preferred Star Twinkling & Smoothing */
         .star { position: absolute; background: white; border-radius: 50%; z-index: 2; filter: blur(0.2px); }
-        .star-bright { box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.4); }
+        .star-bright { box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.4), 0 0 18px 2px rgba(255, 255, 255, 0.15); }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.85); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
 
-        /* Photo Section */
+        /* 4. Photo Section */
         .photo-section { height: 600vh; background: #ffe5ec; position: relative; margin-top: -1px; }
         .photo-container { position: sticky; top: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .polaroid { background: white; padding: 10px 10px 30px; position: absolute; opacity: 0; width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .polaroid img { width: 100%; }
+        .polaroid { background: white; padding: 12px 12px 35px; position: absolute; opacity: 0; width: 280px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+        .polaroid img { width: 100%; border-radius: 2px; }
 
         .mailbox-section { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--primary-pink); }
     </style>
@@ -68,7 +74,7 @@
             <div class="cal-header">FEBRUARY</div>
             <div class="cal-day" id="day-counter">1</div>
         </div>
-        <p class="cal-subtext">Something special is coming up...</p>
+        <p class="cal-subtext" id="cal-subtext">Something special is coming up...</p>
     </div>
 
     <section class="wish-section" id="wish-trigger">
@@ -85,73 +91,79 @@
 
     <section class="photo-section">
         <div class="photo-container">
-            <div class="polaroid"><img src="images/1.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:5px;">Memory 1</div></div>
-            <div class="polaroid"><img src="images/2.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:5px;">Memory 2</div></div>
-            <div class="polaroid"><img src="images/3.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:5px;">Memory 3</div></div>
-            <div class="polaroid"><img src="images/4.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:5px;">Memory 4</div></div>
+            <div class="polaroid"><img src="images/1.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:10px;font-size:1.2rem;">Memory One</div></div>
+            <div class="polaroid"><img src="images/2.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:10px;font-size:1.2rem;">Memory Two</div></div>
+            <div class="polaroid"><img src="images/3.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:10px;font-size:1.2rem;">Memory Three</div></div>
+            <div class="polaroid"><img src="images/4.jpg"><div style="text-align:center;font-family:'Dancing Script';margin-top:10px;font-size:1.2rem;">Memory Four</div></div>
         </div>
     </section>
 
     <section class="mailbox-section">
-        <div style="font-size: 6rem; cursor: pointer;" onclick="document.getElementById('note').style.display='block'">📬</div>
+        <div style="font-size: 7rem; cursor: pointer;" onclick="document.getElementById('note').style.display='block'">📬</div>
     </section>
 
     <div id="note" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:35px; border-radius:25px; z-index:1000; width:85%; max-width:400px; box-shadow:0 30px 60px rgba(0,0,0,0.4);">
-        <p>Your message here...</p>
-        <button onclick="document.getElementById('note').style.display='none'" style="margin-top:20px; width:100%; padding:10px; background:var(--accent-rose); color:white; border:none; border-radius:10px; cursor:pointer;">Close</button>
+        <h2 style="font-family:'Dancing Script'; color: var(--accent-rose); margin-bottom:10px;">My Dearest...</h2>
+        <p>Write your beautiful note here.</p>
+        <button onclick="document.getElementById('note').style.display='none'" style="margin-top:20px; width:100%; padding:12px; background:var(--accent-rose); color:white; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">Close</button>
     </div>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Calendar & Cannon Confetti (Reaching Center)
+        // 1. Calendar & Cannon Confetti
         let dayObj = { val: 1 };
+        gsap.to("#cal-subtext", { opacity: 1, duration: 1, delay: 0.5 });
         gsap.to(dayObj, {
             val: 9, duration: 2.5, onUpdate: () => document.getElementById('day-counter').innerText = Math.floor(dayObj.val),
             onComplete: () => {
                 const duration = 3000;
                 const end = Date.now() + duration;
-
                 (function frame() {
                   confetti({ particleCount: 7, angle: 60, spread: 70, origin: { x: 0, y: 0.65 }, colors: ['#ffafcc', '#ff8fab', '#ffffff'] });
                   confetti({ particleCount: 7, angle: 120, spread: 70, origin: { x: 1, y: 0.65 }, colors: ['#ffafcc', '#ff8fab', '#ffffff'] });
                   if (Date.now() < end) requestAnimationFrame(frame);
                 }());
-
                 gsap.to("#calendar", { y: "-100%", duration: 1, ease: "power4.inOut", delay: 1.2 });
             }
         });
 
-        // 2. Star Sequence
+        // 2. Stars Logic (Symmetric -> Sky -> Big Filled Heart)
         const container = document.getElementById('star-container');
-        const starCount = 500;
+        const starCount = 550; // Increased for a bigger filled heart
         const stars = [];
 
         function isInsideHeart(x, y) {
-            // Normalized coordinates for heart equation
-            const nx = (x - 50) / 2.2;
-            const ny = (y - 45) / -2.2;
+            // Normalized for a BIGGER heart spread
+            const nx = (x - 50) / 2.8; 
+            const ny = (y - 45) / -2.8;
             return Math.pow(nx * nx + ny * ny - 1, 3) - nx * nx * ny * ny * ny <= 0;
         }
 
         for (let i = 0; i < starCount; i++) {
             const s = document.createElement('div');
             s.className = 'star';
-            const size = Math.random() * 2.5 + 0.5;
-            s.style.width = size + 'px'; s.style.height = size + 'px';
-            if (size > 1.8) s.classList.add('star-bright');
+            const sizeValue = Math.random() * 2.5 + 0.4;
+            s.style.width = sizeValue + 'px'; s.style.height = sizeValue + 'px';
+            
+            if (sizeValue > 1.8) {
+                s.classList.add('star-bright');
+                s.style.opacity = Math.random() * 0.3 + 0.7;
+            } else {
+                s.style.opacity = Math.random() * 0.6 + 0.2;
+            }
 
-            // Symmetric Grid
+            s.style.animation = `twinkle ${3 + Math.random() * 5}s infinite ease-in-out`;
+            s.style.animationDelay = `${Math.random() * 5}s`;
+
             const cols = 20;
             s.style.left = (i % cols) * 5 + 'vw';
             s.style.top = Math.floor(i / cols) * 4.5 + 'vh';
             container.appendChild(s);
 
-            // Sky Position
             const skyX = Math.random() * 100;
             const skyY = Math.random() * 100;
 
-            // Better Heart Spread
             let hX, hY;
             do {
                 hX = Math.random() * 100;
@@ -169,17 +181,17 @@
               .to(stars.map(s => s.el), { left: (i) => stars[i].skyX + "vw", top: (i) => stars[i].skyY + "vh", duration: 3 }, 1)
               .to("#star-msg-1", { opacity: 0, duration: 1 }, 1.5)
               .to("#star-msg-2", { opacity: 1, duration: 1 }, 2)
-              .to("#star-msg-2", { opacity: 0, duration: 1, delay: 1 }, 3) // Vanish msg 2
-              .to({}, { duration: 1 }) // PAUSE - Let her see the sky
+              .to("#star-msg-2", { opacity: 0, duration: 1, delay: 1 }, 3)
+              .to({}, { duration: 1 }) // Brief pause for sky view
               .to(stars.map(s => s.el), { 
                   left: (i) => stars[i].hX + "vw", 
                   top: (i) => stars[i].hY + "vh", 
                   backgroundColor: "#ff8fab",
-                  boxShadow: "0 0 10px #ff8fab",
+                  boxShadow: "0 0 15px #ff8fab",
                   duration: 3 
               }, "+=0.5");
 
-        // 3. Fast Photos Transition
+        // 3. Tight Photo Transitions
         const pics = gsap.utils.toArray('.polaroid');
         pics.forEach((pic, i) => {
             gsap.timeline({ scrollTrigger: { trigger: ".photo-section", start: `${i * 20}% top`, end: `${(i+1) * 20}% top`, scrub: true }})
