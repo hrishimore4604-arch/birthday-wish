@@ -185,16 +185,40 @@
             gsap.to(h, { y: -100, opacity: 0, duration: 3 + Math.random() * 5, repeat: -1, ease: "none", delay: Math.random() * 5 });
         }
 
-        // 4. Stacking Polaroid Effect (10 photos)
+       // 4. Stacking Polaroid Effect (10 photos) - ROTATION FIXED
         const pics = gsap.utils.toArray('.polaroid');
         const photoScrollTl = gsap.timeline({
-            scrollTrigger: { trigger: ".photo-section", start: "top top", end: "bottom bottom", scrub: 1, pin: true }
+            scrollTrigger: { 
+                trigger: ".photo-section", 
+                start: "top top", 
+                end: "bottom bottom", 
+                scrub: 1, 
+                pin: true 
+            }
         });
 
         pics.forEach((pic, i) => {
-            photoScrollTl.to(pic, { opacity: 1, y: 0, rotation: (i % 2 === 0 ? 5 : -5) * (i + 1), scale: 1, duration: 1 }, i * 0.75);
+            // Photos stack up one by one
+            photoScrollTl.to(pic, { 
+                opacity: 1, 
+                y: 0, 
+                // Reduced rotation multiplier so the front-most images stay straighter
+                // Max rotation will be roughly 5 to 8 degrees depending on the index
+                rotation: i % 2 === 0 ? Math.min(i * 1.5, 8) : -Math.min(i * 1.5, 8), 
+                scale: 1, 
+                duration: 1,
+                ease: "power2.out"
+            }, i * 0.75);
+
+            // Then they "fly away" to reveal the one underneath
             if (i < pics.length - 1) {
-                photoScrollTl.to(pic, { x: i % 2 === 0 ? 1000 : -1000, rotation: i % 2 === 0 ? 45 : -45, opacity: 0, duration: 1, delay: 0.3 });
+                photoScrollTl.to(pic, { 
+                    x: i % 2 === 0 ? 1200 : -1200, 
+                    rotation: i % 2 === 0 ? 30 : -30, 
+                    opacity: 0, 
+                    duration: 1, 
+                    delay: 0.3 
+                });
             }
         });
     </script>
