@@ -60,7 +60,7 @@
         }
 
         .photo-section { 
-            height: 1200vh; /* Long scroll for 10 photos */
+            height: 600vh; /* Long scroll for 10 photos */
             background: #ffe5ec; 
             position: relative; 
             overflow: hidden;
@@ -185,14 +185,13 @@
             gsap.to(h, { y: -100, opacity: 0, duration: 3 + Math.random() * 5, repeat: -1, ease: "none", delay: Math.random() * 5 });
         }
 
-     // 4. Stacking Polaroid Effect (10 photos) - NO EXCESS SCROLL
+     // 4. Stacking Polaroid Effect (10 photos) - GAP REMOVED
         const pics = gsap.utils.toArray('.polaroid');
         const photoScrollTl = gsap.timeline({
             scrollTrigger: { 
                 trigger: ".photo-section", 
                 start: "top top", 
-                // Reduced from 'bottom bottom' to 'bottom 20%' to snap the exit faster
-                end: "bottom 20%", 
+                end: "bottom bottom", // Releases pin exactly at the end of the 600vh
                 scrub: 1, 
                 pin: true,
                 anticipatePin: 1
@@ -208,24 +207,16 @@
                 scale: 1, 
                 duration: 1,
                 ease: "power2.out"
-            }, i * 0.75);
+            }, i * 0.5); // Faster staggering
 
-            // Fly away logic for all photos EXCEPT the last one (i < 9)
+            // Fly away logic for all photos EXCEPT the last one
             if (i < pics.length - 1) {
                 photoScrollTl.to(pic, { 
                     x: i % 2 === 0 ? 1200 : -1200, 
                     rotation: i % 2 === 0 ? 30 : -30, 
                     opacity: 0, 
                     duration: 1, 
-                    delay: 0.3 
-                });
-            } else {
-                // For the very last photo, just let it sit for a beat then fade slightly
-                // so the transition to the mailbox feels natural
-                photoScrollTl.to(pic, { 
-                    scale: 0.95,
-                    duration: 0.5,
-                    delay: 0.5
+                    delay: 0.2 // Reduced delay to keep it moving
                 });
             }
         });
