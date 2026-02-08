@@ -185,15 +185,17 @@
             gsap.to(h, { y: -100, opacity: 0, duration: 3 + Math.random() * 5, repeat: -1, ease: "none", delay: Math.random() * 5 });
         }
 
-       // 4. Stacking Polaroid Effect (10 photos) - ROTATION FIXED
+     // 4. Stacking Polaroid Effect (10 photos) - NO EXCESS SCROLL
         const pics = gsap.utils.toArray('.polaroid');
         const photoScrollTl = gsap.timeline({
             scrollTrigger: { 
                 trigger: ".photo-section", 
                 start: "top top", 
-                end: "bottom bottom", 
+                // Reduced from 'bottom bottom' to 'bottom 20%' to snap the exit faster
+                end: "bottom 20%", 
                 scrub: 1, 
-                pin: true 
+                pin: true,
+                anticipatePin: 1
             }
         });
 
@@ -202,15 +204,13 @@
             photoScrollTl.to(pic, { 
                 opacity: 1, 
                 y: 0, 
-                // Reduced rotation multiplier so the front-most images stay straighter
-                // Max rotation will be roughly 5 to 8 degrees depending on the index
                 rotation: i % 2 === 0 ? Math.min(i * 1.5, 8) : -Math.min(i * 1.5, 8), 
                 scale: 1, 
                 duration: 1,
                 ease: "power2.out"
             }, i * 0.75);
 
-            // Then they "fly away" to reveal the one underneath
+            // Fly away logic for all photos EXCEPT the last one (i < 9)
             if (i < pics.length - 1) {
                 photoScrollTl.to(pic, { 
                     x: i % 2 === 0 ? 1200 : -1200, 
@@ -218,6 +218,14 @@
                     opacity: 0, 
                     duration: 1, 
                     delay: 0.3 
+                });
+            } else {
+                // For the very last photo, just let it sit for a beat then fade slightly
+                // so the transition to the mailbox feels natural
+                photoScrollTl.to(pic, { 
+                    scale: 0.95,
+                    duration: 0.5,
+                    delay: 0.5
                 });
             }
         });
